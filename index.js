@@ -22,17 +22,30 @@ const db = mysql.createConnection({
 
 db.connect();
 
+/*
 app.get('/', (req, res) => {
 
   const sql = "INSERT INTO requested (rowno) VALUES (1)";
   
-db.query(sql, function(err, rows, fields) {
-  if (err) throw err;
-  res.send('성공')
-  console.log('데이터 추가 성공');
-});
+  db.query(sql, function(err, rows, fields) {
+    if (err) throw err;
+    res.send('성공')
+    console.log('데이터 추가 성공');
+  });
 
 })
+*/
+
+app.get('/list', (req, res) => {
+  const sql = "SELECT BOARD_ID, BOARD_TITLE, BOARD_CONTENT, REGISTER_ID, DATE_FORMAT(REGISTER_DATE, '%Y-%m-%d') AS REGISTER_DATE FROM board";
+  db.query(sql, function(err, result) {
+    if (err) throw err;
+    res.send(result);
+  });
+})
+
+
+
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
