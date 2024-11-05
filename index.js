@@ -26,7 +26,7 @@ const db = mysql.createConnection({
 
 db.connect();
 
-/*
+
 app.get('/', (req, res) => {
 
   const sql = "INSERT INTO requested (rowno) VALUES (1)";
@@ -38,11 +38,21 @@ app.get('/', (req, res) => {
   });
 
 })
-*/
+
 
 app.get('/list', (req, res) => {
   const sql = "SELECT BOARD_ID, BOARD_TITLE, BOARD_CONTENT, REGISTER_ID, DATE_FORMAT(REGISTER_DATE, '%Y-%m-%d') AS REGISTER_DATE FROM board";
-  db.query(sql, function(err, result) {
+  db.query(sql, (err, result)=>{
+    if (err) throw err;
+    res.send(result);
+  });
+})
+
+// /detail 주소로 요청이 들어오면 할 일
+app.get('/detail', (req, res) => {
+  const id = req.query.id;  //get방식으로 id 에 넘어온 숫자 받아오는 방법
+  const sql = "SELECT BOARD_TITLE, BOARD_CONTENT FROM board WHERE BOARD_ID = ?";
+  db.query(sql, [id], (err, result)=>{
     if (err) throw err;
     res.send(result);
   });
@@ -54,8 +64,22 @@ app.post('/insert', (req, res) => {
   let title = req.body.title;
   let content = req.body.content;
 
-  const sql = "INSERT INTO board (BOARD_TITLE, BOARD_CONTENT, REGISTER_ID) VALUES (?, ?, 'admin')"; //보안상 아래 작성
+  const sql = "INSERT INTO board (BOARD_TITLE, BOARD_CONTENT, REGISTER_ID) VALUES (?, ?, 'admin')"; //보안상 아래 작성, 노출될 위험 있는 문장
   db.query(sql, [title, content], (err, result) => {
+    if (err) throw err;
+    res.send(result);
+  });
+})
+
+
+app.post('/update', (req, res) => {
+  // let title = req.body.title;
+  // let content = req.body.content;
+  // let id = req.body.id;
+  const {id, title, content} = req.body; //비구조할당 이용
+  
+  const sql = "UPDATE board SET BOARD_TITLE=?, BOARD_CONTENT=? WHERE BOARD_ID=?";
+  db.query(sql, [title, content, id], (err, result) => {
     if (err) throw err;
     res.send(result);
   });
