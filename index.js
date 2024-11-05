@@ -86,6 +86,19 @@ app.post('/update', (req, res) => {
 })
 
 
+app.post('/delete', (req, res) => {
+  //const boardIdList = req.body.boardIdList;
+  const {boardIdList} = req.body; //비구조할당 이용
+  
+  const sql = `DELETE FROM board WHERE BOARD_ID in (${boardIdList})`;
+  //console.log(sql); 콘솔에서 확인
+  db.query(sql, (err, result) => {
+    if (err) throw err;
+    res.send(result);
+  });
+})
+
+
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
